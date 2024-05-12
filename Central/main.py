@@ -1,22 +1,35 @@
+import sentry_sdk
 from fastapi import FastAPI
-
-from core.config import settings
+from fastapi.routing import APIRoute
+from starlette.middleware.cors import CORSMiddleware
 
 from api.router import router
+from core.config import settings
 
+
+def custom_generate_unique_id(route: APIRoute) -> str:
+    return f"{route.tags[0]}-{route.name}"
+
+
+if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
+    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
 app = FastAPI(
-    title=settings.title,
-    version=settings.version,
-    description=settings.description,
-    openapi_prefix=settings.openapi_prefix,
-    docs_url=settings.docs_url,
-    openapi_url=settings.openapi_url,
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    generate_unique_id_function=custom_generate_unique_id,
 )
 
-app.include_router(router, prefix=settings.openapi_prefix)
+# Set all CORS enabled origins
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-
-@app.get("/")
-async def root():
-    return "Em Construção"
+app.include_router(router, prefix=settings.API_V1_STR)

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from schemas.stationData import StationData
+from schemas.stationData import StationData, StationInfo
 
 router = APIRouter()
 
@@ -10,6 +10,11 @@ router = APIRouter()
     name="Enviar Dados",
 )
 async def send_data(data: StationData) -> str:
+    return "Ok"
+
+
+@router.put("/register", name="Registrar Estação")
+async def register_station(data: StationInfo) -> str:
     return "Ok"
 
 

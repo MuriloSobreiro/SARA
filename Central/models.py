@@ -1,4 +1,5 @@
 from sqlmodel import Field, Relationship, SQLModel
+import datetime
 
 
 # Shared properties
@@ -111,3 +112,46 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str
+
+
+class StationBase(SQLModel):
+    location: int
+    description: str
+
+
+# Database model, database table inferred from class name
+class Station(StationBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    created_at: datetime.datetime | None = Field(
+        default_factory=datetime.datetime.now,
+    )
+    location: int
+    description: str
+
+
+class MeasureBase(SQLModel):
+    station_id: int
+    value: int
+
+
+class MeasureCreate(SQLModel):
+    value: int
+
+
+# Database model, database table inferred from class name
+class Measure(MeasureBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    station_id: int
+    created_at: datetime.datetime | None = Field(
+        default_factory=datetime.datetime.now,
+    )
+    value: int
+
+
+class StationMeasurePublic(MeasureBase):
+    created_at: datetime.datetime
+
+
+class StationMeasuresPublic(SQLModel):
+    data: list[StationMeasurePublic]
+    count: int

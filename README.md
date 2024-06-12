@@ -13,10 +13,7 @@ python -m  venv .venv
 
 pip install poetry
 poetry install
-
-poetry run uvicorn main:app --reload --port 8000
 ```
-
 #### Adicionar seu .env com suas variáveis de aplicação
 ```
 PROJECT_NAME="Central Local"  
@@ -30,4 +27,14 @@ POSTGRES_DB="SARA"
 FIRST_SUPERUSER="Admin"
 FIRST_SUPERUSER_PASSWORD="Admin"
 CLIMATE_API_KEY="Sua Chave da Api do Clima Tempo https://advisor.climatempo.com.br/"
+```
+#### Criar seu banco de dados no Postgres
+```
+python .\central_pre_start.py
+python .\initial_data.py
+```
+
+#### Rodar a aplicação
+```
+poetry run uvicorn main:app --reload --port 8000
 ```

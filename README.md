@@ -29,4 +29,5 @@ POSTGRES_PASSWORD="postgres"
 POSTGRES_DB="SARA"
 FIRST_SUPERUSER="Admin"
 FIRST_SUPERUSER_PASSWORD="Admin"
+CLIMATE_API_KEY="Sua Chave da Api do Clima Tempo https://advisor.climatempo.com.br/"
 ```

@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+import requests
+import json
 
 import emails  # type: ignore
 from jinja2 import Template
@@ -114,3 +116,17 @@ def verify_password_reset_token(token: str) -> str | None:
         return str(decoded_token["sub"])
     except JWTError:
         return None
+
+def get_api_climate(name="",lat="",lon=""):
+    s = "https://apiadvisor.climatempo.com.br/api/v1/climate/rain/locale/"
+    if(name):
+        s = s + "6725?"
+    if(lat and lon):
+        s = s + f"latitude={lat}&longitude={lon}&"
+    s = s + f"token={settings.CLIMATE_API_KEY}"
+    response =json.loads(requests.get(s).text)
+    return s
+def get_city_id(name="Cornélio Porcópio") -> int:
+    s = f"https://apiadvisor.climatempo.com.br/api/v1/locale/city?name={name.replace(" ","_")}&state=PR&token={settings.CLIMATE_API_KEY}"
+    response =json.loads(requests.get(s).text)
+    return response[0]["id"]

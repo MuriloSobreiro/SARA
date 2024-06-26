@@ -161,7 +161,7 @@ class GraphsPage:
         #self.bg_panel.pack(fill='both', expand='yes')
         # Layout
         self.toolbar = Frame(self.window, bg="white", height=30)
-        self.sidepanel = Frame(self.window, bg="pink")
+        self.sidepanel = Frame(self.window, bg='#13209c')
         self.main = Frame(self.window, bg="grey")
 
         self.window.grid_rowconfigure(1, weight=1, uniform=True)

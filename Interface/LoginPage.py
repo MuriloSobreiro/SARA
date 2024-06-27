@@ -1,10 +1,10 @@
 from tkinter import *
 from PIL import ImageTk, Image
-import requests
+import requests, json
 
 user=""
 bearer=""
-
+api_link="http://127.0.0.1:8000/"
 class LoginPage:
     def __init__(self, window):
         self.window = window
@@ -139,9 +139,9 @@ class LoginPage:
         self.password_entry.config(show='*')
 
     def login_action(self):
-        global user, bearer
+        global user, bearer, api_link
         user = self.username_entry.get()
-        r = requests.post("http://127.0.0.1:8000//api/v1/login/access-token", data={"username":user,"password":self.password_entry.get()})
+        r = requests.post(api_link+"/api/v1/login/access-token", data={"username":user,"password":self.password_entry.get()})
         if(r.status_code==200):
             bearer= r.json()['access_token']
             clear_screen(self.window)
@@ -153,8 +153,9 @@ class LoginPage:
 
 
 class GraphsPage:
+    global api_link
     def __init__(self, window):
-        global user
+        global user, bearer
         self.window = window
         # Background image
         self.bg_frame = Image.open('images\\agua.jpg')
@@ -207,6 +208,8 @@ class GraphsPage:
 
     def graph_1_show(self):
         self.populate_toolbar("Estação 1")
+        r = requests.post(api_link+"/api/v1/station/get_station_data?station_id=1&skip=0&limit=100",headers={'Authorization': f'Bearer {bearer}'})
+        print(r.json())
         clear_screen(self.main)
         self.graph_1_image = Image.open('images\\graph.png')
         photo = ImageTk.PhotoImage(self.graph_1_image)

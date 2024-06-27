@@ -1,7 +1,9 @@
 from tkinter import *
 from PIL import ImageTk, Image
+import requests
 
 user=""
+bearer=""
 
 class LoginPage:
     def __init__(self, window):
@@ -78,17 +80,7 @@ class LoginPage:
         self.username_icon_label.image = photo
         self.username_icon_label.place(x=550, y=332)
 
-        # ========================================================================
-        # ============================login button================================
-        # ========================================================================
-        self.lgn_button = Image.open('images\\btn1.png')
-        photo = ImageTk.PhotoImage(self.lgn_button)
-        self.lgn_button_label = Label(self.lgn_frame, image=photo, bg='#040405')
-        self.lgn_button_label.image = photo
-        self.lgn_button_label.place(x=550, y=450)
-        self.login = Button(self.lgn_button_label, text='LOGIN', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
-                            bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=self.login_action)
-        self.login.place(x=20, y=10)
+
     
         # ========================================================================
         # ============================password====================================
@@ -103,6 +95,17 @@ class LoginPage:
 
         self.password_line = Canvas(self.lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
         self.password_line.place(x=550, y=440)
+        # ========================================================================
+        # ============================login button================================
+        # ========================================================================
+        self.lgn_button = Image.open('images\\btn1.png')
+        photo = ImageTk.PhotoImage(self.lgn_button)
+        self.lgn_button_label = Label(self.lgn_frame, image=photo, bg='#040405')
+        self.lgn_button_label.image = photo
+        self.lgn_button_label.place(x=550, y=450)
+        self.login = Button(self.lgn_button_label, text='LOGIN', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
+                            bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=self.login_action)
+        self.login.place(x=20, y=10)
         # ======== Password icon ================
         self.password_icon = Image.open('images\\password_icon.png')
         photo = ImageTk.PhotoImage(self.password_icon)
@@ -136,17 +139,17 @@ class LoginPage:
         self.password_entry.config(show='*')
 
     def login_action(self):
-        global user
+        global user, bearer
         user = self.username_entry.get()
-        if(user):
-            print(user)
-            print(self.password_entry.get())
+        r = requests.post("http://127.0.0.1:8000//api/v1/login/access-token", data={"username":user,"password":self.password_entry.get()})
+        if(r.status_code==200):
+            bearer= r.json()['access_token']
             clear_screen(self.window)
             GraphsPage(self.window)
         else:
-            self.sign_label = Label(self.lgn_frame, text='Usuário não encontrado', font=("yu gothic ui", 11, "bold"),
+            self.sign_label = Label(self.lgn_frame, text='Usuário e senha não encontrado', font=("yu gothic ui", 11, "bold"),
                                 relief=FLAT, borderwidth=0, background="#040405", fg='red')
-            self.sign_label.place(x=620, y=520)
+            self.sign_label.place(x=600, y=520)
 
 
 class GraphsPage:
